@@ -1,0 +1,66 @@
+---
+title: "Coursera - Developing Data Products <br/ > Shiny Application and Reproducible Pitch"
+author: "Benjamin Chan"
+date: "August 21, 2018"
+output: slidy_presentation
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+
+### Instructions
+This peer assessed assignment has two parts. First, I will create a Shiny application and deploy it on Rstudio's servers. Second, I will use Slidify or Rstudio Presenter to prepare a reproducible pitch presentation about my application.
+
+### Data Set Description
+This famous (Fisher's or Anderson's) iris data set gives the measurements in centimeters of the variables sepal length and width and petal length and width, respectively, for 50 flowers from each of 3 species of iris. The species are Iris setosa, versicolor, and virginica.
+
+### Reference
+The shiny app is located here :  https://benjaminchanchunho.shinyapps.io/Iris_Classification/
+
+The GitHub repo is located here : 
+https://github.com/BenjaminChanChunHo/Developing-Data-Products
+
+## Load packages and data
+```{r, warning = FALSE, message = FALSE, cache = TRUE}
+library(shiny)
+library(caret)
+library(e1071)
+library(randomForest)
+library(gbm)
+
+data(iris)
+```
+
+## Build models
+Use 5-fold cross validation for training.
+```{r, cache = TRUE}
+trControl <- trainControl(method = "cv", number = 5)
+```
+
+Use classification tree, random forest and gradient boosting
+```{r, cache = TRUE, warning = FALSE, cache = TRUE}
+model_CT <- train(Species ~ ., data = iris,  
+                  method = "rpart", trControl = trControl)
+model_RF <- train(Species ~ ., data = iris,  
+                  method = "rf", trControl = trControl)
+model_GBM <- train(Species ~ ., data = iris, verbose = FALSE,
+                   method = "gbm", trControl = trControl)
+```
+
+## Make prediction
+Use specific values for example.
+```{r, comment = "", cache = TRUE}
+newdata <- data.frame(Sepal.Length = 6.1, Sepal.Width = 2.6,
+                      Petal.Length = 5.6, Petal.Width = 1.4)
+```
+
+```{r, comment = "", cache = TRUE}
+as.character(predict(model_CT, newdata))
+as.character(predict(model_RF, newdata))
+as.character(predict(model_GBM, newdata))
+```
